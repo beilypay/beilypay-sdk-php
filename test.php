@@ -23,7 +23,7 @@ try {
     $userName       = "helloName";                  // 用户昵称
     $notifyUrl      = "http://www.baidu.com/";      // 代付结果回调地址，后端异步
     $frontUrl       = "http://www.baidu.com/";      // 前端回跳地址
-    $order = $b->createPayment($orderNum, 111, "http://www.baidu.com/", "http://www.baidu.com/", $userId, $userName);
+    $order = $b->createPayment($orderNum, $amount, $notifyUrl, $frontUrl, $userId, $userName);
     echo "OK createPayment {$order->orderNo}, {$order->payUrl}\n";
     var_dump($order);
 } catch(Exception $e) { 
