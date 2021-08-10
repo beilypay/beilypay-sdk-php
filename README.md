@@ -1,1 +1,126 @@
-# beilypay-sdk-php
+# BeilyPay 支付API（v2） 的 PHP 版 SDK
+
+## 一、API 文档
+
+API文档详见 https://github.com/beilypay/beilypay-sdk-java/wiki
+
+## 二、创建 Beilypay 实例
+
+```php
+// 加载依赖
+require_once __DIR__ . "/beilypay/beilypay.inc.php";
+
+use beilypay\Beilypay;
+
+// 以下对接参数通过商务对接获得
+$appId          = <AppID>;
+$merchantId     = <MerchantID>;
+$appSecure      = <AppSecure>;
+$apiHost        = <ApiHost>;        // 注意 测试环境 和 生产环境 地址不同
+
+// 创建实例
+$b = new Beilypay($appId, $merchantId, $appSecure, $apiHost);
+
+```
+
+## 三、创建代收订单
+
+
+```php
+try {    
+    $orderNum       = md5(time() . rand(0, 999999));// 商户的订单号
+    $amount         = 111;                          // 代付金额
+    $userId         = "123123131";                  // 用户Id
+    $userName       = "helloName";                  // 用户昵称
+    $notifyUrl      = "http://www.baidu.com/";      // 代付结果回调地址，后端异步
+    $frontUrl       = "http://www.baidu.com/";      // 前端回跳地址
+    $order = $b->createPayment($orderNum, 111, "http://www.baidu.com/", "http://www.baidu.com/", $userId, $userName);
+    echo "OK createPayment {$order->orderNo}, {$order->payUrl}\n";
+    var_dump($order);
+} catch(Exception $e) { 
+    echo(sprintf("ERROR createPayment %s\n", $e->getMessage()));
+}
+
+```
+
+- 返回的 $order 是 Order 对象
+- API: https://github.com/beilypay/beilypay-sdk-java/wiki#%E4%BB%A3%E4%BB%98%E4%B8%8B%E5%8D%95
+
+
+## 四、创建代付订单
+
+```php
+try {    
+    $orderNum       = md5(time() . rand(0, 999999));// 商户的订单号
+    $amount         = 111;                          // 代付金额
+    $userId         = "123123131";                  // 用户Id
+    $userName       = "helloName";                  // 用户昵称
+    $notifyUrl      = "http://www.baidu.com/";      // 代付结果回调地址，后端异步
+    $frontUrl       = "http://www.baidu.com/";      // 前端回跳地址
+    $order = $b->createPayment($orderNum, 111, "http://www.baidu.com/", "http://www.baidu.com/", $userId, $userName);
+    echo "OK createPayment {$order->orderNo}, {$order->payUrl}\n";
+    var_dump($order);
+} catch(Exception $e) { 
+    echo(sprintf("ERROR createPayment %s\n", $e->getMessage()));
+}
+```
+- 返回的 $order 是 Order 对象
+- API: https://github.com/beilypay/beilypay-sdk-java/wiki#%E4%BB%A3%E4%BB%98%E4%B8%8B%E5%8D%95
+
+
+## 五、查询代收订单
+
+```php
+try {
+    $orderNo = $order->orderNo;
+    $order = $b->queryPayment($orderNo);
+    echo "OK queryPayment {$order->orderNo} STATUS={$order->status}\n";
+    var_dump($order);
+}catch(Exception $e) { 
+    echo(sprintf("ERROR queryPayment %s\n", $e->getMessage()));
+}
+```
+- 返回的 $order 是 Order 对象，字段 status 表示订单状态
+- API: https://github.com/beilypay/beilypay-sdk-java/wiki#%E4%BB%A3%E6%94%B6%E5%8D%95%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2
+
+
+## 五、查询代付订单
+
+```php
+try {
+    $orderNo = $order->orderNo;
+    $order = $b->queryTrans($orderNo);
+    echo "OK queryTrans {$order->orderNo} STATUS={$order->status}\n";
+    var_dump($order);
+}catch(Exception $e) {  
+    echo(sprintf("ERROR queryTrans %s\n", $e->getMessage()));
+}
+
+```
+- 返回的 $order 是 Order 对象，字段 status 表示订单状态
+- API: https://github.com/beilypay/beilypay-sdk-java/wiki#%E4%BB%A3%E6%94%B6%E5%8D%95%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2
+
+
+## 六、回调校验 示例
+
+```php
+// 构造一个 request 参数数组
+$request = array(
+    "abc" => "a123",
+    "acd" => 1234,
+);
+// 生成签名
+$request["sign"] = $b->sign($request);
+echo("sign = {$request['sign']}\n");
+$ok = $b->verfy($request);                  // 校验
+var_dump($ok);
+```
+- API: https://github.com/beilypay/beilypay-sdk-java/wiki#%E4%BB%A3%E6%94%B6%E5%8D%95%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2
+
+## 七、测试代码
+
+见 test.php， 运行 php -f test.php
+
+## 八、其它
+
+无
